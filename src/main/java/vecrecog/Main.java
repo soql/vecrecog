@@ -20,9 +20,13 @@ public class Main {
 		}
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		VideoCaptureHandler videoCaptureHandler=new VideoCaptureHandler();
+		HttpStreamServer httpStreamServer=new HttpStreamServer(videoCaptureHandler);
 		MyFrame myFrame=new MyFrame(videoCaptureHandler);
 		new Thread(myFrame).start();
 		new Thread(videoCaptureHandler).start();
+		new Thread(httpStreamServer).start();
+		
+		
 		
 	}
 

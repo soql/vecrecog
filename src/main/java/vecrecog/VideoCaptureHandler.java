@@ -18,17 +18,20 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 import org.opencv.objdetect.Objdetect;
 import org.opencv.videoio.VideoCapture;
+import org.opencv.videoio.VideoWriter;
 import org.opencv.videoio.Videoio;
 
 
 public class VideoCaptureHandler implements Runnable{
 	public Mat mat;
+	
 	CascadeClassifier faceCascade;
 	
 	VideoCapture capturedVideo;
 	   
 	MatOfRect faces = new MatOfRect();
-//	VideoWriter videoWriter;
+
+	VideoWriter videoWriter;
 	
 	public VideoCaptureHandler() {
 		mat = new Mat();
@@ -38,10 +41,12 @@ public class VideoCaptureHandler implements Runnable{
 		
 		capturedVideo = getFileVideoCapture();			
 		//capturedVideo = getLiveVideoCapture();
-	//	Size size = new Size(capturedVideo.get(Videoio.CAP_PROP_FRAME_WIDTH), capturedVideo.get(Videoio.CAP_PROP_FRAME_HEIGHT));
+		Size size = new Size(capturedVideo.get(Videoio.CAP_PROP_FRAME_WIDTH), capturedVideo.get(Videoio.CAP_PROP_FRAME_HEIGHT));
 		
-	//	videoWriter = new VideoWriter("c:\\TEMP\\best.mp4", VideoWriter.fourcc('m','p','4','v'),
-   //             10, size, true);
+		videoWriter = new VideoWriter("c:\\TEMP\\best.avi", VideoWriter.fourcc('m','p','4','v'),
+                15, size, true);
+		
+		
 		
 		   
     		
@@ -55,8 +60,7 @@ public class VideoCaptureHandler implements Runnable{
 							
 				
 		boolean isOpened = capturedVideo.open("c:\\TEMP\\ok.mp4");
-		System.out.println("Getting file ok");
-	//	openRTSP(isOpened, capturedVideo, mat);
+		System.out.println("Getting file ok");	
 		return capturedVideo;
 	}
 	
@@ -64,7 +68,7 @@ public class VideoCaptureHandler implements Runnable{
 	public VideoCapture getLiveVideoCapture(){
 		capturedVideo = new VideoCapture();
 							
-		String addressString = "rtsp://admin:@192.168.1.10:554/mode=real&idc=1&ids=1";		
+		String addressString = "rtsp://admin:@zjc.oth.net.pl:554/mode=real&idc=1&ids=1";		
 		boolean isOpened = capturedVideo.open(addressString);
 		openRTSP(isOpened, capturedVideo, mat);
 		return capturedVideo;
@@ -143,8 +147,7 @@ public class VideoCaptureHandler implements Runnable{
 	
 	}
 	
-	public BufferedImage getImage() {
-		capturedVideo.read(mat);
+	public BufferedImage getImage() {		
 		display(mat, faceCascade);
 		MatOfByte mob = new MatOfByte();
 		Imgcodecs.imencode(".jpg", mat, mob);
@@ -161,17 +164,15 @@ public class VideoCaptureHandler implements Runnable{
 		return null;
 	}
 
-	public void run() {
-		System.out.println("ELO1");
-	while (capturedVideo.read(mat)) {
-		System.out.println("ELO");
+	public void run() {		
+	while (capturedVideo.read(mat)) {		
 			detectAndDisplay(mat, faceCascade);			
-       //     videoWriter.write(mat);         
-			 try { Thread.sleep(250);
-             } catch (InterruptedException e) {    }
+            videoWriter.write(mat);         
+			 /*try { Thread.sleep(250);
+             } catch (InterruptedException e) {    }*/
         }
 		capturedVideo.release();
-   //     videoWriter.release();
+        videoWriter.release();
 		
 	}
 }
