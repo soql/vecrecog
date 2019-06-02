@@ -43,7 +43,7 @@ public class VideoCaptureHandler implements Runnable{
 		//capturedVideo = getLiveVideoCapture();
 		Size size = new Size(capturedVideo.get(Videoio.CAP_PROP_FRAME_WIDTH), capturedVideo.get(Videoio.CAP_PROP_FRAME_HEIGHT));
 		
-		videoWriter = new VideoWriter("c:\\TEMP\\best.avi", VideoWriter.fourcc('m','p','4','v'),
+		videoWriter = new VideoWriter("http://localhost:12500/feed1.ffm", VideoWriter.fourcc('m','j','p','g'),
                 15, size, true);
 		
 		

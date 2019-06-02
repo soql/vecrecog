@@ -32,7 +32,7 @@ public class MyFrame extends JFrame implements Runnable{
 	public void run() {
 		  for (;;){
               repaint();              
-              try { Thread.sleep(30);
+              try { Thread.sleep(10);
               } catch (InterruptedException e) {    }
           }
 		
