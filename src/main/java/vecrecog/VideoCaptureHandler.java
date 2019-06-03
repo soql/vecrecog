@@ -43,7 +43,7 @@ public class VideoCaptureHandler implements Runnable{
 		//capturedVideo = getLiveVideoCapture();
 		Size size = new Size(capturedVideo.get(Videoio.CAP_PROP_FRAME_WIDTH), capturedVideo.get(Videoio.CAP_PROP_FRAME_HEIGHT));
 		
-		videoWriter = new VideoWriter("http://localhost:12500/feed1.ffm", VideoWriter.fourcc('m','j','p','g'),
+		videoWriter = new VideoWriter("http://localhost:12500/feed1.ffm", VideoWriter.fourcc('m','p','4','v'),
                 15, size, true);
 		
 		
@@ -94,6 +94,7 @@ public class VideoCaptureHandler implements Runnable{
 	public void detectAndDisplay(Mat frame, CascadeClassifier faceCascade)
 	{
 		int absoluteFaceSize=0;
+		int absoluteMaxFaceSize=0;
 		
 		Mat grayFrame = new Mat();
 		
@@ -111,11 +112,18 @@ public class VideoCaptureHandler implements Runnable{
 				absoluteFaceSize = Math.round(height * 0.05f);
 			}
 		}
-		
+		if (absoluteMaxFaceSize == 0)
+		{
+			int height = grayFrame.rows();
+			if (Math.round(height * 0.2f) > 0)
+			{
+				absoluteMaxFaceSize = Math.round(height * 0.2f);
+			}
+		}
 		// detect faces
 		
-		faceCascade.detectMultiScale(grayFrame, faces, 1.1, 5, 0 | Objdetect.CASCADE_SCALE_IMAGE,
-				new Size(absoluteFaceSize, absoluteFaceSize), new Size());
+		faceCascade.detectMultiScale(grayFrame, faces, 1.1, 5, 0 | Objdetect.CASCADE_DO_CANNY_PRUNING,
+				new Size(absoluteFaceSize, absoluteFaceSize), new Size(absoluteMaxFaceSize,absoluteMaxFaceSize));
 				
 		// each rectangle in faces is a face: draw them!
 		Rect[] facesArray = faces.toArray();		
