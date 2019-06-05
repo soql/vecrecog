@@ -11,12 +11,15 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.core.MatOfRect;
 import org.opencv.core.Rect;
+import org.opencv.core.Rect2d;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 import org.opencv.objdetect.Objdetect;
+import org.opencv.tracking.Tracker;
+import org.opencv.tracking.TrackerBoosting;
 import org.opencv.videoio.VideoCapture;
 import org.opencv.videoio.VideoWriter;
 import org.opencv.videoio.Videoio;
@@ -32,9 +35,13 @@ public class VideoCaptureHandler implements Runnable{
 	MatOfRect faces = new MatOfRect();
 
 	VideoWriter videoWriter;
+	Tracker tracker=null;
+	
+	Rect2d r=new Rect2d();
 	
 	public VideoCaptureHandler() {
 		mat = new Mat();
+		
 		faceCascade = new CascadeClassifier();		
 		faceCascade.load("resources/cars.xml");
 		//faceCascade.load("C:\\Program Files\\opencv\\build\\etc\\haarcascades\\haarcascade_frontalcatface.xml");
@@ -122,13 +129,18 @@ public class VideoCaptureHandler implements Runnable{
 		}
 		// detect faces
 		
-		faceCascade.detectMultiScale(grayFrame, faces, 1.1, 5, 0 | Objdetect.CASCADE_DO_CANNY_PRUNING,
+		faceCascade.detectMultiScale(grayFrame, faces, 1.1, 8, 0 | Objdetect.CASCADE_DO_CANNY_PRUNING,
 				new Size(absoluteFaceSize, absoluteFaceSize), new Size(absoluteMaxFaceSize,absoluteMaxFaceSize));
 				
 		// each rectangle in faces is a face: draw them!
 		Rect[] facesArray = faces.toArray();		
 		for (int i = 0; i < facesArray.length; i++)
 		{
+			if(tracker==null) {
+				tracker=TrackerBoosting.create();
+				tracker.init(mat, new Rect2d(facesArray[i].tl(), facesArray[i].br()));
+				return;
+			}
 			Imgproc.rectangle(frame, facesArray[i].tl(), facesArray[i].br(), new Scalar(7, 255, 90), 4);
 			System.out.println(facesArray[i].tl());	
 			System.out.println(facesArray[i].br());	
@@ -137,6 +149,11 @@ public class VideoCaptureHandler implements Runnable{
 			
 		
 	
+	}
+	public void track() {
+		
+		tracker=TrackerBoosting.create();
+	//	tracker.init(mat, new Rect2d());
 	}
 	
 	public void display(Mat frame, CascadeClassifier faceCascade)
@@ -149,6 +166,7 @@ public class VideoCaptureHandler implements Runnable{
 			System.out.println(facesArray[i].tl());	
 			System.out.println(facesArray[i].br());	
 		}
+		Imgproc.rectangle(mat, r.tl(), r.br(),new Scalar(0, 0, 0), 4);
 		
 			
 		
@@ -173,9 +191,17 @@ public class VideoCaptureHandler implements Runnable{
 	}
 
 	public void run() {		
-	while (capturedVideo.read(mat)) {		
-			detectAndDisplay(mat, faceCascade);			
-            videoWriter.write(mat);         
+	while (capturedVideo.read(mat)) {	
+			if(tracker==null) {
+				detectAndDisplay(mat, faceCascade);
+			}else {
+				
+				 boolean ok=tracker.update(mat,r);
+				 if(!ok) {
+					 System.out.println("Zle");
+				 }				
+			}
+            //videoWriter.write(mat);         
 			 /*try { Thread.sleep(250);
              } catch (InterruptedException e) {    }*/
         }
