@@ -24,64 +24,51 @@ import org.opencv.videoio.VideoCapture;
 import org.opencv.videoio.VideoWriter;
 import org.opencv.videoio.Videoio;
 
+public class VideoCaptureHandler implements Runnable {
+	private Mat mat = new Mat();
 
-public class VideoCaptureHandler implements Runnable{
-	public Mat mat;
-	
-	CascadeClassifier faceCascade;
-	
-	VideoCapture capturedVideo;
-	   
-	MatOfRect faces = new MatOfRect();
+	private VideoCapture capturedVideo;
 
-	VideoWriter videoWriter;
-	Tracker tracker=null;
-	
-	Rect2d r=new Rect2d();
-	
+	private VideoWriter videoWriter=null;
+
+	private CarDetector carDetector = null;
+
+	private ObjectAnalizator objectAnalizator = null;
+
 	public VideoCaptureHandler() {
-		mat = new Mat();
-		
-		faceCascade = new CascadeClassifier();		
-		faceCascade.load("resources/cars.xml");
-		//faceCascade.load("C:\\Program Files\\opencv\\build\\etc\\haarcascades\\haarcascade_frontalcatface.xml");
-		
-		capturedVideo = getFileVideoCapture();			
-		//capturedVideo = getLiveVideoCapture();
-		Size size = new Size(capturedVideo.get(Videoio.CAP_PROP_FRAME_WIDTH), capturedVideo.get(Videoio.CAP_PROP_FRAME_HEIGHT));
-		
-		videoWriter = new VideoWriter("http://localhost:12500/feed1.ffm", VideoWriter.fourcc('m','p','4','v'),
-                15, size, true);
-		
-		
-		
-		   
-    		
-		
+
+		 //capturedVideo = getFileVideoCapture();
+		 capturedVideo = getLiveVideoCapture();
+		initVideoWriter();
 	}
-	
-	public VideoCapture getFileVideoCapture (){
+
+	public void initVideoWriter() {
+		Size size = new Size(capturedVideo.get(Videoio.CAP_PROP_FRAME_WIDTH),
+				capturedVideo.get(Videoio.CAP_PROP_FRAME_HEIGHT));
+
+		videoWriter = new VideoWriter("appsrc ! queue ! videoconvert ! video/x-raw ! omxh264enc ! video/x-h264 ! h264parse ! rtph264pay ! udpsink host=localhost port=5000 sync=false", VideoWriter.fourcc('m', 'p', '4', 'v'), 15,
+				size, true);
+
+		System.out.println(videoWriter.isOpened());
+	}
+
+	public VideoCapture getFileVideoCapture() {
 		System.out.println("Getting file");
-		//capturedVideo = new VideoCapture("c:\\TEMP\\Camera1_21-34-07.avi");
-		capturedVideo = new VideoCapture("c:\\TEMP\\ok.mp4");
-							
-				
+		capturedVideo = new VideoCapture();
 		boolean isOpened = capturedVideo.open("c:\\TEMP\\ok.mp4");
-		System.out.println("Getting file ok");	
+		System.out.println("Getting file ok");
 		return capturedVideo;
 	}
-	
-	
-	public VideoCapture getLiveVideoCapture(){
+
+	public VideoCapture getLiveVideoCapture() {
 		capturedVideo = new VideoCapture();
-							
-		String addressString = "rtsp://admin:@zjc.oth.net.pl:554/mode=real&idc=1&ids=1";		
+
+		String addressString = "rtsp://admin:@192.168.1.10:554/mode=real&idc=1&ids=1";
 		boolean isOpened = capturedVideo.open(addressString);
 		openRTSP(isOpened, capturedVideo, mat);
 		return capturedVideo;
 	}
-	
-	
+
 	private void openRTSP(boolean isOpened, VideoCapture capturedVideo, Mat cameraMat) {
 		if (isOpened) {
 			boolean tempBool = capturedVideo.read(cameraMat);
@@ -98,83 +85,29 @@ public class VideoCaptureHandler implements Runnable{
 			System.out.println("Camera connection problem. Check addressString");
 		}
 	}
-	public void detectAndDisplay(Mat frame, CascadeClassifier faceCascade)
-	{
-		int absoluteFaceSize=0;
-		int absoluteMaxFaceSize=0;
-		
-		Mat grayFrame = new Mat();
-		
-		// convert the frame in gray scale
-		Imgproc.cvtColor(frame, grayFrame, Imgproc.COLOR_BGR2GRAY);
-		// equalize the frame histogram to improve the result
-		Imgproc.equalizeHist(grayFrame, grayFrame);
-		
-		// compute minimum face size (20% of the frame height, in our case)
-		if (absoluteFaceSize == 0)
-		{
-			int height = grayFrame.rows();
-			if (Math.round(height * 0.05f) > 0)
-			{
-				absoluteFaceSize = Math.round(height * 0.05f);
-			}
-		}
-		if (absoluteMaxFaceSize == 0)
-		{
-			int height = grayFrame.rows();
-			if (Math.round(height * 0.2f) > 0)
-			{
-				absoluteMaxFaceSize = Math.round(height * 0.2f);
-			}
-		}
-		// detect faces
-		
-		faceCascade.detectMultiScale(grayFrame, faces, 1.1, 8, 0 | Objdetect.CASCADE_DO_CANNY_PRUNING,
-				new Size(absoluteFaceSize, absoluteFaceSize), new Size(absoluteMaxFaceSize,absoluteMaxFaceSize));
-				
-		// each rectangle in faces is a face: draw them!
-		Rect[] facesArray = faces.toArray();		
-		for (int i = 0; i < facesArray.length; i++)
-		{
-			if(tracker==null) {
-				tracker=TrackerBoosting.create();
-				tracker.init(mat, new Rect2d(facesArray[i].tl(), facesArray[i].br()));
+
+	public void display(Mat frame) {
+		objectAnalizator.getObjectsList().stream().forEach(object -> {
+			if (object.getTrackerRect() == null) {
+				System.out.println("NULL");
 				return;
 			}
-			Imgproc.rectangle(frame, facesArray[i].tl(), facesArray[i].br(), new Scalar(7, 255, 90), 4);
-			System.out.println(facesArray[i].tl());	
-			System.out.println(facesArray[i].br());	
-		}
-		
-			
-		
-	
-	}
-	public void track() {
-		
-		tracker=TrackerBoosting.create();
-	//	tracker.init(mat, new Rect2d());
-	}
-	
-	public void display(Mat frame, CascadeClassifier faceCascade)
-	{	
+
+			Imgproc.rectangle(frame, object.getTrackerRect().tl(), object.getTrackerRect().br(), new Scalar(0, 0, 0),
+					3);
+		});
 		// each rectangle in faces is a face: draw them!
-		Rect[] facesArray = faces.toArray();		
-		for (int i = 0; i < facesArray.length; i++)
-		{
-			Imgproc.rectangle(frame, facesArray[i].tl(), facesArray[i].br(), new Scalar(7, 255, 90), 4);
-			System.out.println(facesArray[i].tl());	
-			System.out.println(facesArray[i].br());	
-		}
-		Imgproc.rectangle(mat, r.tl(), r.br(),new Scalar(0, 0, 0), 4);
-		
-			
-		
-	
+		/*
+		 * Rect[] facesArray = faces.toArray(); for (int i = 0; i < facesArray.length;
+		 * i++) { Imgproc.rectangle(frame, facesArray[i].tl(), facesArray[i].br(), new
+		 * Scalar(7, 255, 90), 4); System.out.println(facesArray[i].tl());
+		 * System.out.println(facesArray[i].br()); } Imgproc.rectangle(mat, r.tl(),
+		 * r.br(),new Scalar(0, 0, 0), 4);
+		 */
 	}
-	
-	public BufferedImage getImage() {		
-		display(mat, faceCascade);
+
+	public BufferedImage getImage() {
+		display(mat);
 		MatOfByte mob = new MatOfByte();
 		Imgcodecs.imencode(".jpg", mat, mob);
 		byte ba[] = mob.toArray();
@@ -190,23 +123,46 @@ public class VideoCaptureHandler implements Runnable{
 		return null;
 	}
 
-	public void run() {		
-	while (capturedVideo.read(mat)) {	
-			if(tracker==null) {
-				detectAndDisplay(mat, faceCascade);
-			}else {
-				
-				 boolean ok=tracker.update(mat,r);
-				 if(!ok) {
-					 System.out.println("Zle");
-				 }				
+	public void run() {
+		int i = 0;
+		while (capturedVideo.read(mat)) {
+			i++;
+			if (i % 10 == 0) {
+				analizeFrame();
 			}
-            //videoWriter.write(mat);         
-			 /*try { Thread.sleep(250);
-             } catch (InterruptedException e) {    }*/
-        }
+			updateTrackers();
+			if(videoWriter!=null)
+				videoWriter.write(mat);
+			/*
+			 * try { Thread.sleep(250); } catch (InterruptedException e) { }
+			 */
+		}
 		capturedVideo.release();
-        videoWriter.release();
-		
+		videoWriter.release();
+
 	}
+
+	private void updateTrackers() {
+		objectAnalizator.getObjectsList().forEach(object -> object.updateTracker(mat));
+
+	}
+
+	private void analizeFrame() {
+		if (carDetector != null) {
+			MatOfRect matOfRect = carDetector.detect(mat);
+			if (objectAnalizator != null) {
+				objectAnalizator.analize(matOfRect, mat);
+			}
+		}
+
+	}
+
+	public void setCarDetector(CarDetector carDetector) {
+		this.carDetector = carDetector;
+	}
+
+	public void setObjectAnalizator(ObjectAnalizator objectAnalizator) {
+		this.objectAnalizator = objectAnalizator;
+	}
+
 }
