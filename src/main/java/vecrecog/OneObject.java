@@ -4,6 +4,8 @@ import java.util.Date;
 
 import org.opencv.core.Mat;
 import org.opencv.core.Rect2d;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
 import org.opencv.tracking.Tracker;
 
 public class OneObject {
@@ -20,6 +22,8 @@ public class OneObject {
 	private Tracker tracker;
 	
 	private Rect2d trackerRect=new Rect2d();
+	
+	private boolean lost=false;
 	
 	public OneObject(double x1, double y1, double x2, double y2, long detectionTime) {
 		super();
@@ -78,8 +82,13 @@ public class OneObject {
 			System.out.println("Utrata trackingu objektu "+id);
 		}		
 	}
+	
 	public Rect2d getTrackerRect() {
 		return trackerRect;
+	}
+	public Rect2d getRectToDisplay() {
+		//return trackerRect;
+		return new Rect2d(x1,y1,x2-x1,y2-y1);
 	}
 	public long getLastUpdateTime() {
 		return lastUpdateTime;
@@ -87,7 +96,34 @@ public class OneObject {
 	public int getId() {
 		return id;
 	}
+	public void drawAnalizator(Mat frame) {
+		if(lost) {
+			return;
+		}
+		if (getRectToDisplay() == null) {
+			System.out.println("NULL");
+			return;
+		}
+		
+		Imgproc.rectangle(frame, getRectToDisplay().tl(), getRectToDisplay().br(), new Scalar(0, 0, 0),
+				3);		
+	}
 	
+	public void drawTracker(Mat frame) {
+		if (getTrackerRect() == null) {
+			System.out.println("NULL");
+			return;
+		}
+	
+		Imgproc.rectangle(frame, getTrackerRect().tl(), getTrackerRect().br(), new Scalar(100, 100, 100),
+				3);		
+	}
+	public void setLost() {
+		lost=true;
+	}
+	public boolean isLost() {
+		return lost;
+	}
 	
 	
 	

@@ -41,9 +41,11 @@ public class ObjectAnalizator implements Runnable{
 		
 		for(int i=0; i<objectsList.size(); i++) {
 			OneObject object=objectsList.get(i);
+			if(object.isLost())
+				continue;
 			if(isNear(object, rect2d)) {
 				object.update(rect2d);
-			//	System.out.println("OBJECT UPDATED "+object);
+				System.out.println("OBJECT UPDATED "+object);
 			}else {
 				addObject(rect2d);
 			}
@@ -53,13 +55,13 @@ public class ObjectAnalizator implements Runnable{
 		OneObject oneObject=new OneObject(rect2d.x, rect2d.y, rect2d.x+rect2d.width, rect2d.y+rect2d.height, new Date().getTime());
 		objectsList.add(oneObject);
 		System.out.println("ADD OBJECT "+oneObject);
-		Tracker tracker=TrackerBoosting.create();
+		Tracker tracker=TrackerCSRT.create();
 		tracker.init(mat, rect2d);
 		oneObject.setTracker(tracker);
 		
 	}
 	private boolean isNear(OneObject object, Rect2d rect) {
-		int margines=100;	
+		int margines=150;	
 		if(
 				(Math.abs(object.getX1()-rect.x)<margines) &&
 				(Math.abs(object.getY1()-rect.y)<margines) &&
@@ -81,10 +83,10 @@ public class ObjectAnalizator implements Runnable{
 				OneObject object=objectsList.get(i);
 				if(object.getLastUpdateTime()+2500<new Date().getTime()) {
 					System.out.println("Utracono obiekt o id "+object.getId());
-					toRemove.add(object);
+					object.setLost();
 				}
 			}
-			/*toRemove.forEach(object -> objectsList.remove(object));*/
+			
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {

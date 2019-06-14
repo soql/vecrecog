@@ -34,11 +34,13 @@ public class VideoCaptureHandler implements Runnable {
 	private CarDetector carDetector = null;
 
 	private ObjectAnalizator objectAnalizator = null;
+	
+	private boolean analizeEnabled=false;
 
 	public VideoCaptureHandler() {
 
-		 //capturedVideo = getFileVideoCapture();
-		 capturedVideo = getLiveVideoCapture();
+		 capturedVideo = getFileVideoCapture();
+		 //capturedVideo = getLiveVideoCapture();
 		initVideoWriter();
 	}
 
@@ -88,14 +90,9 @@ public class VideoCaptureHandler implements Runnable {
 
 	public void display(Mat frame) {
 		objectAnalizator.getObjectsList().stream().forEach(object -> {
-			if (object.getTrackerRect() == null) {
-				System.out.println("NULL");
-				return;
-			}
-
-			Imgproc.rectangle(frame, object.getTrackerRect().tl(), object.getTrackerRect().br(), new Scalar(0, 0, 0),
-					3);
-		});
+			object.drawAnalizator(frame);
+			object.drawTracker(frame);
+					});
 		// each rectangle in faces is a face: draw them!
 		/*
 		 * Rect[] facesArray = faces.toArray(); for (int i = 0; i < facesArray.length;
@@ -127,15 +124,16 @@ public class VideoCaptureHandler implements Runnable {
 		int i = 0;
 		while (capturedVideo.read(mat)) {
 			i++;
-			if (i % 10 == 0) {
+			if(analizeEnabled) {
 				analizeFrame();
+				updateTrackers();
 			}
-			updateTrackers();
 			if(videoWriter!=null)
 				videoWriter.write(mat);
-			/*
-			 * try { Thread.sleep(250); } catch (InterruptedException e) { }
-			 */
+			if(!analizeEnabled) {
+			 try { Thread.sleep(50); } catch (InterruptedException e) { }
+			}
+			
 		}
 		capturedVideo.release();
 		videoWriter.release();
@@ -163,6 +161,11 @@ public class VideoCaptureHandler implements Runnable {
 
 	public void setObjectAnalizator(ObjectAnalizator objectAnalizator) {
 		this.objectAnalizator = objectAnalizator;
+	}
+
+	public void enableAnalize() {
+		analizeEnabled=true;
+		
 	}
 
 }
