@@ -33,7 +33,7 @@ public class Main {
 		new Thread(myFrame).start();
 		new Thread(videoCaptureHandler).start();
 		new Thread(objectAnalizator).start();
-		//new Thread(httpStreamServer).start();
+		new Thread(httpStreamServer).start();
 		
 		
 		

@@ -77,8 +77,7 @@ public class ObjectAnalizator implements Runnable{
 	}
 	@Override
 	public void run() {
-		while(true) {
-			List<OneObject> toRemove=new ArrayList<OneObject>();
+		while(true) {			
 			for(int i=0; i<objectsList.size(); i++) {
 				OneObject object=objectsList.get(i);
 				if(object.getLastUpdateTime()+2500<new Date().getTime()) {

@@ -57,7 +57,7 @@ public class VideoCaptureHandler implements Runnable {
 	public VideoCapture getFileVideoCapture() {
 		System.out.println("Getting file");
 		capturedVideo = new VideoCapture();
-		boolean isOpened = capturedVideo.open("c:\\TEMP\\ok.mp4");
+		boolean isOpened = capturedVideo.open("c:\\TEMP\\Camera1_06-19-35.mp4");		
 		System.out.println("Getting file ok");
 		return capturedVideo;
 	}
@@ -131,7 +131,7 @@ public class VideoCaptureHandler implements Runnable {
 			if(videoWriter!=null)
 				videoWriter.write(mat);
 			if(!analizeEnabled) {
-			 try { Thread.sleep(50); } catch (InterruptedException e) { }
+			 try { Thread.sleep(10); } catch (InterruptedException e) { }
 			}
 			
 		}
