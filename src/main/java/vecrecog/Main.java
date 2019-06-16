@@ -8,9 +8,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class Main {
 	
 	public static void main(String[] args) {		
-			new Main();											
+			new Main(args);											
 	}
-	public Main() {
+	public Main(String[] args) {
 		//SpringApplication.run(Main.class, args);
 		try {
 			String path = "C:\\Program Files\\opencv\\build\\bin";
@@ -24,11 +24,11 @@ public class Main {
 		CarDetector carDetector=new CarDetector();
 		ObjectAnalizator objectAnalizator=new ObjectAnalizator();
 		
-		VideoCaptureHandler videoCaptureHandler=new VideoCaptureHandler();
+		VideoCaptureHandler videoCaptureHandler=new VideoCaptureHandler(args[0]);
 		videoCaptureHandler.setCarDetector(carDetector);
-		videoCaptureHandler.setObjectAnalizator(objectAnalizator);
-		HttpStreamServer httpStreamServer=new HttpStreamServer(videoCaptureHandler);
+		videoCaptureHandler.setObjectAnalizator(objectAnalizator);		
 		MyFrame myFrame=new MyFrame(videoCaptureHandler);
+		HttpStreamServer httpStreamServer=new HttpStreamServer(videoCaptureHandler);
 		
 		new Thread(myFrame).start();
 		new Thread(videoCaptureHandler).start();

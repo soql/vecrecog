@@ -12,8 +12,7 @@ import java.util.logging.Logger;
 
 public class HttpStreamServer implements Runnable {
 
-
-    private BufferedImage img = null;
+    
     private ServerSocket serverSocket;
     private Socket socket;
     private final String boundary = "stream";
@@ -26,7 +25,7 @@ public class HttpStreamServer implements Runnable {
 
 
     public void startStreamingServer() throws IOException {
-        serverSocket = new ServerSocket(8080);
+        serverSocket = new ServerSocket(8089);
         socket = serverSocket.accept();
         writeHeader(socket.getOutputStream(), boundary);
     }
@@ -50,7 +49,7 @@ public class HttpStreamServer implements Runnable {
         try {
             outputStream = socket.getOutputStream();            
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(img, "jpg", baos);
+            ImageIO.write(bufferedImage, "jpg", baos);
             byte[] imageBytes = baos.toByteArray();
             outputStream.write(("Content-type: image/jpeg\r\n" +
                     "Content-Length: " + imageBytes.length + "\r\n" +
@@ -58,6 +57,8 @@ public class HttpStreamServer implements Runnable {
             outputStream.write(imageBytes);
             outputStream.write(("\r\n--" + boundary + "\r\n").getBytes());
         } catch (Exception ex) {
+        	 System.out.println("Error streaming image");
+        	 ex.printStackTrace();
             socket = serverSocket.accept();
             writeHeader(socket.getOutputStream(), boundary);
         }
@@ -70,7 +71,9 @@ public class HttpStreamServer implements Runnable {
             startStreamingServer();
 
             while (true) {
+            	System.out.println("PUSH");
                 pushImage(videoCaptureHandler.getImage());
+                
             }
         } catch (IOException e) {
             return;

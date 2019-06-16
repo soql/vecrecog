@@ -23,6 +23,7 @@ import org.opencv.tracking.TrackerBoosting;
 import org.opencv.videoio.VideoCapture;
 import org.opencv.videoio.VideoWriter;
 import org.opencv.videoio.Videoio;
+import org.springframework.util.StringUtils;
 
 public class VideoCaptureHandler implements Runnable {
 	private Mat mat = new Mat();
@@ -37,10 +38,14 @@ public class VideoCaptureHandler implements Runnable {
 	
 	private boolean analizeEnabled=false;
 
-	public VideoCaptureHandler() {
-
-		 capturedVideo = getFileVideoCapture();
-		 //capturedVideo = getLiveVideoCapture();
+	public VideoCaptureHandler(String arg) {
+		if(!StringUtils.isEmpty(arg)) {
+			System.out.println("Running local file video capture");
+			 capturedVideo = getFileVideoCapture(arg);			
+		}else{
+			System.out.println("Running live video capture");
+			capturedVideo = getLiveVideoCapture();
+		}
 		initVideoWriter();
 	}
 
@@ -54,10 +59,10 @@ public class VideoCaptureHandler implements Runnable {
 		System.out.println(videoWriter.isOpened());
 	}
 
-	public VideoCapture getFileVideoCapture() {
+	public VideoCapture getFileVideoCapture(String arg) {
 		System.out.println("Getting file");
 		capturedVideo = new VideoCapture();
-		boolean isOpened = capturedVideo.open("c:\\TEMP\\Camera1_06-19-35.mp4");		
+		boolean isOpened = capturedVideo.open(arg);		
 		System.out.println("Getting file ok");
 		return capturedVideo;
 	}
