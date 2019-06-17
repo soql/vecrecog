@@ -5,16 +5,9 @@
 	<groupId>pl.net.oth</groupId>
 	<artifactId>vecrecog</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>vecrecog</name>
-	<dependencies>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-			<version>2.1.5.RELEASE</version>
-		</dependency>		
-	</dependencies>
-	 <properties>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <maven.compiler.source>1.8</maven.compiler.source>
-    </properties>
+	<name>vecrecog</name>	
+	<properties>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.source>1.8</maven.compiler.source>
+	</properties>
 </project>
