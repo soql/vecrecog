@@ -28,7 +28,7 @@ public class Main {
 	//	MyFrame myFrame=new MyFrame(videoCaptureHandler);
 		HttpStreamServer httpStreamServer=new HttpStreamServer(videoCaptureHandler);
 		
-		new Thread(myFrame).start();
+		//new Thread(myFrame).start();
 		new Thread(videoCaptureHandler).start();
 		new Thread(objectAnalizator).start();
 		new Thread(httpStreamServer).start();
