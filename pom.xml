@@ -5,9 +5,18 @@
 	<groupId>pl.net.oth</groupId>
 	<artifactId>vecrecog</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>vecrecog</name>	
+	<name>vecrecog</name>
+	<dependencies>
+		<dependency>
+			<groupId>org.opencv</groupId>
+			<artifactId>opencv</artifactId>
+			<version>3.4</version>
+			<scope>system</scope>
+			<systemPath>/usr/local/share/OpenCV/java/opencv-346.jar</systemPath>
+		</dependency>
+	</dependencies>
 	<properties>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.compiler.source>1.8</maven.compiler.source>
 	</properties>
-</project>
+</project>                                                                                                    
