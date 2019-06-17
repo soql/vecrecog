@@ -23,7 +23,6 @@ import org.opencv.tracking.TrackerBoosting;
 import org.opencv.videoio.VideoCapture;
 import org.opencv.videoio.VideoWriter;
 import org.opencv.videoio.Videoio;
-import org.springframework.util.StringUtils;
 
 public class VideoCaptureHandler implements Runnable {
 	private Mat mat = new Mat();
@@ -39,7 +38,7 @@ public class VideoCaptureHandler implements Runnable {
 	private boolean analizeEnabled=false;
 
 	public VideoCaptureHandler(String arg) {
-		if(!StringUtils.isEmpty(arg)) {
+		if(arg!=null && !arg.equals("")) {
 			System.out.println("Running local file video capture");
 			 capturedVideo = getFileVideoCapture(arg);			
 		}else{
