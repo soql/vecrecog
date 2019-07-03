@@ -2,11 +2,14 @@ package vecrecog;
 
 import java.util.Date;
 
-import org.opencv.core.Mat;
-import org.opencv.core.Rect2d;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
-import org.opencv.tracking.Tracker;
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Point;
+import org.bytedeco.opencv.opencv_core.Rect2d;
+import org.bytedeco.opencv.opencv_core.Scalar;
+import org.bytedeco.opencv.opencv_tracking.Tracker;
+import static org.bytedeco.opencv.global.opencv_core.*;
+import static org.bytedeco.opencv.global.opencv_imgcodecs.*;
+import static org.bytedeco.opencv.global.opencv_imgproc.*;
 
 public class OneObject {
 	private double x1,y1,x2,y2;
@@ -64,10 +67,10 @@ public class OneObject {
 		this.y2 = y2;
 	}
 	public void update(Rect2d rect2d) {
-		x1=rect2d.x;
-		y1=rect2d.y;
-		x2=rect2d.x+rect2d.width;
-		y2=rect2d.y+rect2d.height;
+		x1=rect2d.x();
+		y1=rect2d.y();
+		x2=rect2d.x()+rect2d.width();
+		y2=rect2d.y()+rect2d.height();
 		lastUpdateTime=new Date().getTime();
 	}
 	public Tracker getTracker() {
@@ -105,8 +108,7 @@ public class OneObject {
 			return;
 		}
 		
-		Imgproc.rectangle(frame, getRectToDisplay().tl(), getRectToDisplay().br(), new Scalar(0, 0, 0),
-				3);		
+		rectangle(frame, new Point((int)getRectToDisplay().tl().x(),(int)getRectToDisplay().tl().y()), new Point((int)getRectToDisplay().br().x(), (int)getRectToDisplay().br().y()), new Scalar(0, 0, 0,0));		
 	}
 	
 	public void drawTracker(Mat frame) {
@@ -115,8 +117,7 @@ public class OneObject {
 			return;
 		}
 	
-		Imgproc.rectangle(frame, getTrackerRect().tl(), getTrackerRect().br(), new Scalar(100, 100, 100),
-				3);		
+		rectangle(frame, new Point((int)getRectToDisplay().tl().x(),(int)getRectToDisplay().tl().y()), new Point((int)getRectToDisplay().br().x(), (int)getRectToDisplay().br().y()), new Scalar(0, 0, 0,0));	
 	}
 	public void setLost() {
 		lost=true;

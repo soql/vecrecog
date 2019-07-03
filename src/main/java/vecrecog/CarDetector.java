@@ -1,15 +1,16 @@
 package vecrecog;
 
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfRect;
-import org.opencv.core.Rect;
-import org.opencv.core.Rect2d;
-import org.opencv.core.Scalar;
-import org.opencv.core.Size;
+
+import org.bytedeco.javacv.ImageTransformer;
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.RectVector;
+import org.bytedeco.opencv.opencv_core.Size;
+import org.bytedeco.opencv.opencv_objdetect.CascadeClassifier;
+import static org.bytedeco.opencv.global.opencv_core.*;
+import static org.bytedeco.opencv.global.opencv_imgcodecs.*;
+import static org.bytedeco.opencv.global.opencv_imgproc.*;
 import org.opencv.imgproc.Imgproc;
-import org.opencv.objdetect.CascadeClassifier;
 import org.opencv.objdetect.Objdetect;
-import org.opencv.tracking.TrackerBoosting;
 
 public class CarDetector {
 	
@@ -20,19 +21,19 @@ public class CarDetector {
 		cascade.load("resources/cars.xml");		
 	}
 	
-	public MatOfRect detect(Mat frame)
+	public RectVector detect(Mat frame)
 	{
 		int absoluteFaceSize=0;
 		int absoluteMaxFaceSize=0;
 		
-		MatOfRect results=new MatOfRect();
+		RectVector results=new RectVector();
 		
 		Mat grayFrame = new Mat();
 		
-		// convert the frame in gray scale
-		Imgproc.cvtColor(frame, grayFrame, Imgproc.COLOR_BGR2GRAY);
+		// convert the frame in gray scale		
+		cvtColor(frame, grayFrame, Imgproc.COLOR_BGR2GRAY);
 		// equalize the frame histogram to improve the result
-		Imgproc.equalizeHist(grayFrame, grayFrame);
+		equalizeHist(grayFrame, grayFrame);
 		
 		// compute minimum face size (20% of the frame height, in our case)
 		if (absoluteFaceSize == 0)

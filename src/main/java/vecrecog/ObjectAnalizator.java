@@ -4,28 +4,23 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfRect;
-import org.opencv.core.Rect;
-import org.opencv.core.Rect2d;
-import org.opencv.tracking.Tracker;
-import org.opencv.tracking.TrackerBoosting;
-import org.opencv.tracking.TrackerCSRT;
-import org.opencv.tracking.TrackerGOTURN;
-import org.opencv.tracking.TrackerKCF;
-import org.opencv.tracking.TrackerMIL;
-import org.opencv.tracking.TrackerMOSSE;
-import org.opencv.tracking.TrackerMedianFlow;
-import org.opencv.tracking.TrackerTLD;
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Point2d;
+import org.bytedeco.opencv.opencv_core.Rect;
+import org.bytedeco.opencv.opencv_core.Rect2d;
+import org.bytedeco.opencv.opencv_core.RectVector;
+import org.bytedeco.opencv.opencv_tracking.Tracker;
+import org.bytedeco.opencv.opencv_tracking.TrackerCSRT;
+
 
 public class ObjectAnalizator implements Runnable{
 	List<OneObject> objectsList=new ArrayList<OneObject>();
 	
 	private Mat mat;
 	
-	public void analize(MatOfRect matOfRect, Mat mat) {
+	public void analize(RectVector matOfRect, Mat mat) {
 		this.mat=mat;
-		Rect[] rects = matOfRect.toArray();
+		Rect[] rects = matOfRect.get();
 			if(rects.length==0)
 				return;
 		for(int i=0; i<rects.length; i++) {
@@ -33,7 +28,7 @@ public class ObjectAnalizator implements Runnable{
 		}
 	}
 	private void inteligentAdd(Rect rect) {
-		Rect2d rect2d=new Rect2d(rect.tl(), rect.br());
+		Rect2d rect2d=new Rect2d(new Point2d(rect.tl()), new Point2d(rect.br()));
 		if(objectsList.isEmpty()) {			
 			addObject(rect2d);
 			return;
@@ -52,7 +47,7 @@ public class ObjectAnalizator implements Runnable{
 		}
 	}
 	void addObject(Rect2d rect2d){
-		OneObject oneObject=new OneObject(rect2d.x, rect2d.y, rect2d.x+rect2d.width, rect2d.y+rect2d.height, new Date().getTime());
+		OneObject oneObject=new OneObject(rect2d.x(), rect2d.y(), rect2d.x()+rect2d.width(), rect2d.y()+rect2d.height(), new Date().getTime());
 		objectsList.add(oneObject);
 		System.out.println("ADD OBJECT "+oneObject);
 		Tracker tracker=TrackerCSRT.create();
@@ -63,10 +58,10 @@ public class ObjectAnalizator implements Runnable{
 	private boolean isNear(OneObject object, Rect2d rect) {
 		int margines=150;	
 		if(
-				(Math.abs(object.getX1()-rect.x)<margines) &&
-				(Math.abs(object.getY1()-rect.y)<margines) &&
-				(Math.abs(object.getX2()-(rect.x+rect.width))<margines) &&
-				(Math.abs(object.getY2()-(rect.y+rect.height))<margines))
+				(Math.abs(object.getX1()-rect.x())<margines) &&
+				(Math.abs(object.getY1()-rect.y())<margines) &&
+				(Math.abs(object.getX2()-(rect.x()+rect.width()))<margines) &&
+				(Math.abs(object.getY2()-(rect.y()+rect.height()))<margines))
 				{
 					return true;
 				}

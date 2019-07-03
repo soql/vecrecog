@@ -8,11 +8,9 @@
 	<name>vecrecog</name>
 	<dependencies>
 		<dependency>
-			<groupId>org.opencv</groupId>
-			<artifactId>opencv</artifactId>
-			<version>3.4</version>
-			<scope>system</scope>
-			<systemPath>/usr/local/share/OpenCV/java/opencv-346.jar</systemPath>
+			<groupId>org.bytedeco</groupId>
+			<artifactId>javacv-platform</artifactId>
+			<version>1.5</version>
 		</dependency>
 	</dependencies>
 	<properties>

@@ -3,26 +3,20 @@ package vecrecog;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 import javax.imageio.ImageIO;
 
-import org.opencv.core.CvException;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfByte;
-import org.opencv.core.MatOfRect;
-import org.opencv.core.Rect;
-import org.opencv.core.Rect2d;
-import org.opencv.core.Scalar;
-import org.opencv.core.Size;
-import org.opencv.imgcodecs.Imgcodecs;
-import org.opencv.imgproc.Imgproc;
-import org.opencv.objdetect.CascadeClassifier;
-import org.opencv.objdetect.Objdetect;
-import org.opencv.tracking.Tracker;
-import org.opencv.tracking.TrackerBoosting;
-import org.opencv.videoio.VideoCapture;
-import org.opencv.videoio.VideoWriter;
-import org.opencv.videoio.Videoio;
+import org.bytedeco.javacpp.indexer.ByteBufferIndexer;
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.RectVector;
+import org.bytedeco.opencv.opencv_core.Size;
+import org.bytedeco.opencv.opencv_videoio.VideoCapture;
+import org.bytedeco.opencv.opencv_videoio.VideoWriter;
+
+import static org.bytedeco.opencv.global.opencv_core.*;
+import static org.bytedeco.opencv.global.opencv_imgcodecs.*;
+import static org.bytedeco.opencv.global.opencv_imgproc.*;
 
 public class VideoCaptureHandler implements Runnable {
 	private Mat mat = new Mat();
@@ -45,10 +39,10 @@ public class VideoCaptureHandler implements Runnable {
 			System.out.println("Running live video capture");
 			capturedVideo = getLiveVideoCapture();
 		}
-		initVideoWriter();
+		//initVideoWriter();
 	}
 
-	public void initVideoWriter() {
+/*	public void initVideoWriter() {
 		Size size = new Size(capturedVideo.get(Videoio.CAP_PROP_FRAME_WIDTH),
 				capturedVideo.get(Videoio.CAP_PROP_FRAME_HEIGHT));
 
@@ -56,7 +50,7 @@ public class VideoCaptureHandler implements Runnable {
 				size, true);
 
 		System.out.println(videoWriter.isOpened());
-	}
+	}*/
 
 	public VideoCapture getFileVideoCapture(String arg) {
 		System.out.println("Getting file");
@@ -109,9 +103,9 @@ public class VideoCaptureHandler implements Runnable {
 
 	public BufferedImage getImage() {
 		display(mat);
-		MatOfByte mob = new MatOfByte();
-		Imgcodecs.imencode(".jpg", mat, mob);
-		byte ba[] = mob.toArray();
+		ByteBuffer mob =  ByteBuffer.allocate((int)mat.total()*mat.channels());
+		imencode(".jpg", mat, mob);
+		byte ba[] = mob.array();
 
 		BufferedImage bi;
 		try {
@@ -151,7 +145,7 @@ public class VideoCaptureHandler implements Runnable {
 
 	private void analizeFrame() {
 		if (carDetector != null) {
-			MatOfRect matOfRect = carDetector.detect(mat);
+			RectVector matOfRect = carDetector.detect(mat);
 			if (objectAnalizator != null) {
 				objectAnalizator.analize(matOfRect, mat);
 			}
