@@ -25,13 +25,14 @@ public class Main {
 		VideoCaptureHandler videoCaptureHandler=new VideoCaptureHandler(args[0]);
 		videoCaptureHandler.setCarDetector(carDetector);
 		videoCaptureHandler.setObjectAnalizator(objectAnalizator);		
-		MyFrame myFrame=new MyFrame(videoCaptureHandler);
-		/*HttpStreamServer httpStreamServer=new HttpStreamServer(videoCaptureHandler);*/
+	/*	MyFrame myFrame=new MyFrame(videoCaptureHandler);*/
+		HttpStreamServer httpStreamServer=new HttpStreamServer(videoCaptureHandler);
 		
-		new Thread(myFrame).start();
+		//new Thread(myFrame).start();
+		videoCaptureHandler.enableAnalize();
 		new Thread(videoCaptureHandler).start();
 		new Thread(objectAnalizator).start();
-	/*	new Thread(httpStreamServer).start();*/
+		new Thread(httpStreamServer).start();
 		
 		
 		

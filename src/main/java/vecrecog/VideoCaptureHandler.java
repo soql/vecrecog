@@ -123,14 +123,16 @@ public class VideoCaptureHandler implements Runnable {
 		while (capturedVideo.read(mat)) {
 			i++;
 			if(analizeEnabled) {
-				analizeFrame();
-				updateTrackers();
+				if(i%10==0) {
+					analizeFrame();
+					updateTrackers();
+				}
 			}
 			if(videoWriter!=null)
 				videoWriter.write(mat);
-			if(!analizeEnabled) {
+			/*if(!analizeEnabled) {
 			 try { Thread.sleep(10); } catch (InterruptedException e) { }
-			}
+			}*/
 			
 		}
 		capturedVideo.release();

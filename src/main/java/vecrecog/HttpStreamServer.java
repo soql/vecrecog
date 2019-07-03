@@ -70,8 +70,7 @@ public class HttpStreamServer implements Runnable {
             System.out.print("go to  http://localhost:8080 with browser");
             startStreamingServer();
 
-            while (true) {
-            	System.out.println("PUSH");
+            while (true) {            	
                 pushImage(videoCaptureHandler.getImage());
                 
             }

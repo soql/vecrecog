@@ -28,7 +28,8 @@ public class ObjectAnalizator implements Runnable{
 		}
 	}
 	private void inteligentAdd(Rect rect) {
-		Rect2d rect2d=new Rect2d(new Point2d(rect.tl()), new Point2d(rect.br()));
+		System.out.println("ELO "+rect.tl().x()+" "+rect.tl().y()+" "+rect.width()+" "+rect.height() );
+		Rect2d rect2d=new Rect2d(rect.tl().x(),rect.tl().y(),rect.width(),rect.height() );
 		if(objectsList.isEmpty()) {			
 			addObject(rect2d);
 			return;
@@ -47,7 +48,7 @@ public class ObjectAnalizator implements Runnable{
 		}
 	}
 	void addObject(Rect2d rect2d){
-		OneObject oneObject=new OneObject(rect2d.x(), rect2d.y(), rect2d.x()+rect2d.width(), rect2d.y()+rect2d.height(), new Date().getTime());
+		OneObject oneObject=new OneObject(rect2d.tl().x(), rect2d.tl().y(), rect2d.tl().x()+rect2d.width(), rect2d.tl().y()+rect2d.height(), new Date().getTime());
 		objectsList.add(oneObject);
 		System.out.println("ADD OBJECT "+oneObject);
 		Tracker tracker=TrackerCSRT.create();
