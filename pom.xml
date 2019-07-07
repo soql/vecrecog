@@ -5,16 +5,34 @@
 	<groupId>pl.net.oth</groupId>
 	<artifactId>vecrecog</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>war</packaging>
 	<name>vecrecog</name>
 	<dependencies>
 		<dependency>
 			<groupId>org.bytedeco</groupId>
 			<artifactId>javacv-platform</artifactId>
-			<version>1.5</version>
+			<version>1.5</version>			
 		</dependency>
 	</dependencies>
 	<properties>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.compiler.source>1.8</maven.compiler.source>
 	</properties>
+	<build>
+	<plugins>
+		<plugin>
+	    <artifactId>maven-war-plugin</artifactId>
+	    <configuration>
+	        <attachClasses>true</attachClasses>
+	        <webXml>src/main/webapp/WEB-INF/web.xml</webXml>
+	        <webResources>
+	            <resource>
+	                <directory>src/main/webapp</directory>
+	                <filtering>true</filtering>
+	            </resource>
+	        </webResources>
+	    </configuration>
+		</plugin>
+		</plugins>
+	</build>
 </project>                                                                                                    
