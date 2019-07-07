@@ -107,8 +107,8 @@ public class OneObject {
 			System.out.println("NULL");
 			return;
 		}
-		
-		rectangle(frame, new Point((int)getRectToDisplay().tl().x(),(int)getRectToDisplay().tl().y()), new Point((int)getRectToDisplay().br().x(), (int)getRectToDisplay().br().y()), new Scalar(0, 0, 0,0));		
+		System.out.println("Draw analizer ");
+		rectangle(frame, new Point((int)getRectToDisplay().tl().x(),(int)getRectToDisplay().tl().y()), new Point((int)getRectToDisplay().br().x(), (int)getRectToDisplay().br().y()), new Scalar(0, 0, 0,10),5,2,0);		
 	}
 	
 	public void drawTracker(Mat frame) {
@@ -116,8 +116,8 @@ public class OneObject {
 			System.out.println("NULL");
 			return;
 		}
-	
-		rectangle(frame, new Point((int)getRectToDisplay().tl().x(),(int)getRectToDisplay().tl().y()), new Point((int)getRectToDisplay().br().x(), (int)getRectToDisplay().br().y()), new Scalar(0, 0, 0,0));	
+	System.out.println("Draw Tracker");
+		rectangle(frame, new Point((int)getTrackerRect().tl().x(),(int)getTrackerRect().tl().y()), new Point((int)getTrackerRect().br().x(), (int)getTrackerRect().br().y()), new Scalar(255, 255, 255,10),5,2,0);	
 	}
 	public void setLost() {
 		lost=true;

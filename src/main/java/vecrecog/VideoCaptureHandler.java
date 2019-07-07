@@ -8,6 +8,8 @@ import java.nio.ByteBuffer;
 import javax.imageio.ImageIO;
 
 import org.bytedeco.javacpp.indexer.ByteBufferIndexer;
+import org.bytedeco.javacv.OpenCVFrameGrabber;
+import org.bytedeco.opencv.global.opencv_highgui;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.RectVector;
 import org.bytedeco.opencv.opencv_core.Size;
@@ -17,6 +19,8 @@ import org.bytedeco.opencv.opencv_videoio.VideoWriter;
 import static org.bytedeco.opencv.global.opencv_core.*;
 import static org.bytedeco.opencv.global.opencv_imgcodecs.*;
 import static org.bytedeco.opencv.global.opencv_imgproc.*;
+import static org.bytedeco.opencv.global.opencv_highgui.*;
+import static org.bytedeco.opencv.global.opencv_videoio.*;
 
 public class VideoCaptureHandler implements Runnable {
 	private Mat mat = new Mat();
@@ -38,7 +42,8 @@ public class VideoCaptureHandler implements Runnable {
 		}else{
 			System.out.println("Running live video capture");
 			capturedVideo = getLiveVideoCapture();
-		}
+		}		
+		capturedVideo.set(CAP_PROP_POS_MSEC, 155000+7*1000+5*1000);
 		//initVideoWriter();
 	}
 
@@ -123,7 +128,7 @@ public class VideoCaptureHandler implements Runnable {
 		while (capturedVideo.read(mat)) {
 			i++;
 			if(analizeEnabled) {
-				if(i%10==0) {
+				if(i%1==0) {
 					analizeFrame();
 					updateTrackers();
 				}

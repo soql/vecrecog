@@ -15,17 +15,17 @@ import org.opencv.objdetect.Objdetect;
 public class CarDetector {
 	
 	CascadeClassifier cascade;
-			
+		
+	int absoluteFaceSize=0;
+	int absoluteMaxFaceSize=0;
+	
 	public CarDetector() {
 		cascade = new CascadeClassifier();		
 		cascade.load("resources/cars.xml");		
 	}
 	
 	public RectVector detect(Mat frame)
-	{
-		int absoluteFaceSize=0;
-		int absoluteMaxFaceSize=0;
-		
+	{	
 		RectVector results=new RectVector();
 		
 		Mat grayFrame = new Mat();
@@ -47,15 +47,16 @@ public class CarDetector {
 		if (absoluteMaxFaceSize == 0)
 		{
 			int height = grayFrame.rows();
-			if (Math.round(height * 0.2f) > 0)
+			if (Math.round(height * 0.5f) > 0)
 			{
-				absoluteMaxFaceSize = Math.round(height * 0.2f);
+				absoluteMaxFaceSize = Math.round(height * 0.5f);
 			}
 		}
 		
 		try {
-			cascade.detectMultiScale(grayFrame, results, 1.1, 8, 0 | Objdetect.CASCADE_SCALE_IMAGE,
+			cascade.detectMultiScale(grayFrame, results, 1.1, 2, 0 | Objdetect.CASCADE_SCALE_IMAGE,
 					new Size(absoluteFaceSize, absoluteFaceSize), new Size(absoluteMaxFaceSize,absoluteMaxFaceSize));
+			System.out.println("DETECTION! "+results.size());
 		} catch (Exception e) {
 			System.out.println("B³¹d "+e);
 		}

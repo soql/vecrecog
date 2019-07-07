@@ -57,12 +57,13 @@ public class ObjectAnalizator implements Runnable{
 		
 	}
 	private boolean isNear(OneObject object, Rect2d rect) {
+		System.out.println("Check if near "+object);
 		int margines=150;	
 		if(
-				(Math.abs(object.getX1()-rect.x())<margines) &&
-				(Math.abs(object.getY1()-rect.y())<margines) &&
-				(Math.abs(object.getX2()-(rect.x()+rect.width()))<margines) &&
-				(Math.abs(object.getY2()-(rect.y()+rect.height()))<margines))
+				(Math.abs(object.getX1()-rect.tl().x())<margines) &&
+				(Math.abs(object.getY1()-rect.tl().y())<margines) &&
+				(Math.abs(object.getX2()-(rect.tl().x()+rect.width()))<margines) &&
+				(Math.abs(object.getY2()-(rect.tl().y()+rect.height()))<margines))
 				{
 					return true;
 				}
@@ -76,9 +77,9 @@ public class ObjectAnalizator implements Runnable{
 		while(true) {			
 			for(int i=0; i<objectsList.size(); i++) {
 				OneObject object=objectsList.get(i);
-				if(object.getLastUpdateTime()+2500<new Date().getTime()) {
+				if(!object.isLost() && object.getLastUpdateTime()+25000<new Date().getTime()) {
 					System.out.println("Utracono obiekt o id "+object.getId());
-					object.setLost();
+					//object.setLost();
 				}
 			}
 			
