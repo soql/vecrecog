@@ -126,6 +126,8 @@ public class VideoCaptureHandler implements Runnable {
 	public void run() {
 		int i = 0;
 		while (capturedVideo.read(mat)) {
+			if(mat.empty())
+				continue;
 			i++;
 			if(analizeEnabled) {
 				if(i%1==0) {
