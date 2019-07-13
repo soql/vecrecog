@@ -2,6 +2,7 @@ package vecrecog;
 
 import org.opencv.core.Core;
 import org.opencv.osgi.OpenCVNativeLoader;
+import static org.bytedeco.opencv.global.opencv_core.*;
 
 public class Main {
 	
@@ -18,7 +19,8 @@ public class Main {
 			System.out.println("Error loading libs");
 		}
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);*/
-		
+		System.out.println("INFO");
+		getBuildInformation();
 		CarDetector carDetector=new CarDetector();
 		ObjectAnalizator objectAnalizator=new ObjectAnalizator();
 		
