@@ -21,7 +21,7 @@ public class CarDetector {
 	
 	public CarDetector() {
 		cascade = new CascadeClassifier();		
-		cascade.load("resources/cars.xml");		
+		cascade.load("/tmp/resources/cars.xml");		
 	}
 	
 	public RectVector detect(Mat frame)

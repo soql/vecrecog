@@ -143,7 +143,9 @@ public class VideoCaptureHandler implements Runnable {
 			
 		}
 		capturedVideo.release();
-		videoWriter.release();
+		if(videoWriter!=null) {
+			videoWriter.release();
+		}
 
 	}
 
